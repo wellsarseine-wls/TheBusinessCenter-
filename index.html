@@ -51,6 +51,21 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);bord
 .prod .d{color:var(--muted);font-size:.9rem;flex:1}
 .prod .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
 .price{font-weight:500;color:var(--gold)}
+.prod .d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tile[data-open],.prod h3[data-open]{cursor:pointer}
+.more{background:none;border:0;color:var(--gold);font:inherit;font-size:.9rem;padding:6px 0 0;text-align:left;cursor:pointer;text-decoration:underline}
+.dimg{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--t1);margin:14px 0 8px;display:grid;place-items:center;border:1px solid var(--line)}
+.dimg img{width:100%;height:100%;object-fit:contain}
+.dimg.ph{font:800 4rem "Bricolage Grotesque",sans-serif;color:var(--gold)}
+.thumbs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px}
+.thumbs button{width:64px;height:64px;flex:none;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:none;cursor:pointer}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+#dbody h2{font-size:1.5rem;margin:10px 0 6px}
+.meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.tag{border:1px solid var(--line);border-radius:999px;padding:2px 12px;color:var(--muted);font-size:.9rem}
+.big{font-size:1.4rem}
+.dd{white-space:pre-line;margin:0 0 14px}
+#dbody .btn{width:100%;text-align:center;margin-bottom:10px}
 .empty{color:var(--muted);padding:20px 0}
 section{padding:48px 0}
 section h2{font-size:clamp(1.6rem,4vw,2.2rem);margin-bottom:14px}
@@ -109,6 +124,10 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <footer><div class="wrap">© <span id="y"></span> The Business Center · +269 447 97 83 · <a href="mailto:thebusinesscenter269@gmail.com">thebusinesscenter269@gmail.com</a></div></footer>
 
 <div id="veil"></div>
+<aside id="det" aria-label="Détails du produit" aria-hidden="true">
+<div class="ah"><span></span><button class="btn alt" id="dclose">Fermer</button></div>
+<div id="dbody"></div>
+</aside>
 
 <aside id="cart" aria-label="Panier" aria-hidden="true">
 <div class="ah"><h2 style="font-size:1.4rem">Votre panier</h2><button class="btn alt" id="close">Fermer</button></div>
@@ -155,7 +174,7 @@ function render(){
  const s=($("#sort")||{}).value;
  let l=D.products.filter(p=>(cat==="Tous"||p.c===cat)&&(p.n+" "+p.d).toLowerCase().includes(q));
  if(s==="a")l.sort((a,b)=>a.p-b.p);if(s==="d")l.sort((a,b)=>b.p-a.p);
- $("#grid").innerHTML=l.length?l.map(p=>`<article class="prod"><div class="tile" style="background:var(--t${tint(p.c)})">${p.img?`<img src="${esc(p.img)}" alt="${esc(p.n)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.alt.slice(0,2)}))">`:`<span aria-hidden="true">${esc(p.n.slice(0,2))}</span>`}</div><h3>${esc(p.n)}</h3><div class="d">${esc(p.d)}</div><div class="row"><span class="price">${fmt(p.p)}</span>${p.ok===false?`<button class="btn" disabled>Épuisé</button>`:`<button class="btn" data-add="${esc(p.id)}">Ajouter</button>`}</div></article>`).join(""):
+ $("#grid").innerHTML=l.length?l.map(p=>`<article class="prod"><div class="tile" data-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Voir les détails de ${esc(p.n)}" style="background:var(--t${tint(p.c)})">${p.img?`<img src="${esc(p.img)}" alt="${esc(p.n)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.alt.slice(0,2)}))">`:`<span aria-hidden="true">${esc(p.n.slice(0,2))}</span>`}</div><h3 data-open="${esc(p.id)}">${esc(p.n)}</h3><div class="d">${esc(p.d)}</div><button class="more" data-open="${esc(p.id)}">Voir les détails</button><div class="row"><span class="price">${fmt(p.p)}</span>${p.ok===false?`<button class="btn" disabled>Épuisé</button>`:`<button class="btn" data-add="${esc(p.id)}">Ajouter</button>`}</div></article>`).join(""):
  `<p class="empty">${D.error?"Impossible de charger les produits pour le moment. Écrivez-nous sur WhatsApp.":D.products.length?"Aucun produit ne correspond. Essayez un autre mot ou choisissez « Tous ».":"La boutique est en préparation. Revenez bientôt ou écrivez-nous sur WhatsApp."}</p>`;
 }
 function drawCart(){
@@ -164,7 +183,7 @@ function drawCart(){
  return `<div class="it"><div><b>${esc(p.n)}</b><br><span class="price">${fmt(p.p)}</span></div><div class="qty"><button data-m="${esc(k)}" aria-label="Retirer un ${esc(p.n)}">−</button><span>${cart[k]}</span><button data-p="${esc(k)}" aria-label="Ajouter un ${esc(p.n)}">+</button></div></div>`}).join(""):`<p class="empty">Votre panier est vide. Ajoutez un produit depuis la boutique.</p>`;
  $("#tot").textContent=fmt(t);$("#n").textContent=n;$("#wa").disabled=!n;save();
 }
-function panel(id,o){["#cart"].forEach(s=>{const on=s===id&&o;$(s).classList.toggle("open",on);$(s).setAttribute("aria-hidden",!on)});$("#veil").classList.toggle("on",o)}
+function panel(id,o){["#cart","#det"].forEach(s=>{const on=s===id&&o;$(s).classList.toggle("open",on);$(s).setAttribute("aria-hidden",!on)});$("#veil").classList.toggle("on",o)}
 function closeAll(){panel("",false)}
 
 document.addEventListener("click",e=>{
@@ -173,10 +192,11 @@ document.addEventListener("click",e=>{
  if(d.add){cart[d.add]=(cart[d.add]||0)+1;drawCart();panel("#cart",true)}
  if(d.p){cart[d.p]++;drawCart()}
  if(d.m){cart[d.m]--;drawCart()}
+ if(d.th){$("#dmain").src=d.th}
 });
 document.addEventListener("change",e=>{if(e.target.id==="sort")render()});
 $("#sf").addEventListener("submit",e=>{e.preventDefault();q=$("#q").value.trim().toLowerCase();render();$("#catalogue").scrollIntoView()});
-$("#open").onclick=()=>panel("#cart",true);$("#close").onclick=closeAll;$("#veil").onclick=closeAll;
+$("#open").onclick=()=>panel("#cart",true);$("#close").onclick=closeAll;$("#dclose").onclick=closeAll;$("#veil").onclick=closeAll;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
 $("#wa").onclick=()=>{
  const ids=Object.keys(cart).filter(k=>cart[k]>0&&D.products.some(p=>p.id===k));if(!ids.length)return;let t=0;
@@ -187,6 +207,21 @@ $("#wa").onclick=()=>{
  window.open("https://wa.me/"+TEL+"?text="+encodeURIComponent(m),"_blank","noopener");
 };
 
+/* Fiche produit */
+function openDet(id){
+ const p=D.products.find(x=>x.id===id);if(!p)return;
+ const im=p.imgs&&p.imgs.length?p.imgs:(p.img?[p.img]:[]);
+ const wa="https://wa.me/"+TEL+"?text="+encodeURIComponent("Bonjour The Business Center, j'ai une question sur : "+p.n+" ("+fmt(p.p)+")");
+ $("#dbody").innerHTML=(im.length?`<div class="dimg"><img id="dmain" src="${esc(im[0])}" alt="${esc(p.n)}"></div>`+(im.length>1?`<div class="thumbs">${im.map((u,i)=>`<button data-th="${esc(u)}" aria-label="Photo ${i+1}"><img src="${esc(u)}" alt=""></button>`).join("")}</div>`:""):`<div class="dimg ph">${esc(p.n.slice(0,2))}</div>`)+
+ `<h2>${esc(p.n)}</h2><div class="meta"><span class="tag">${esc(p.c)}</span><span class="price big">${fmt(p.p)}</span></div>`+
+ (p.d?`<p class="dd">${esc(p.d)}</p>`:"")+(p.more?`<p class="dd">${esc(p.more)}</p>`:"")+
+ (p.ok===false?`<button class="btn" disabled>Épuisé</button>`:`<button class="btn" data-add="${esc(p.id)}">Ajouter au panier</button>`)+
+ `<a class="btn alt" href="${wa}" target="_blank" rel="noopener">Poser une question sur WhatsApp</a>`;
+ panel("#det",true);$("#det").scrollTop=0;
+}
+document.addEventListener("click",e=>{const o=e.target.closest("[data-open]");if(o)openDet(o.dataset.open)});
+document.addEventListener("keydown",e=>{const o=e.target.closest&&e.target.closest(".tile[data-open]");if(o&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openDet(o.dataset.open)}});
+
 /* Lecture du Google Sheets */
 const norm=s=>String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
 const slug=s=>norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"produit";
@@ -196,13 +231,14 @@ function parseCSV(s){const rows=[];let r=[],c="",q=false;
   else if(ch=='"')q=true;else if(ch==","){r.push(c);c=""}
   else if(ch=="\n"||ch=="\r"){if(ch=="\r"&&s[i+1]=="\n")i++;r.push(c);rows.push(r);r=[];c=""}else c+=ch}
  if(c||r.length){r.push(c);rows.push(r)}return rows}
-function photo(u){u=(u||"").trim();const m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+)/);return m?"https://drive.google.com/thumbnail?id="+m[1]+"&sz=w700":u}
+function photo(u){u=(u||"").trim();const m=u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]+)/);return m?"https://drive.google.com/thumbnail?id="+m[1]+"&sz=w900":u}
 function fromRows(rows){if(!rows.length)return[];const h=rows[0].map(norm),ix=k=>h.indexOf(k),out=[],seen={};
  rows.slice(1).forEach(r=>{const n=(r[ix("nom")]||"").trim();if(!n)return;
+  const imgs=String(r[ix("photo")]||"").split(/[\s;|]+/).filter(Boolean).map(photo);
   let id=slug(n);seen[id]=(seen[id]||0)+1;if(seen[id]>1)id+="-"+seen[id];
   out.push({id,n,c:(r[ix("categorie")]||"").trim()||"Autres",
    p:parseFloat(String(r[ix("prix")]||"0").replace(/[\s\u00a0]/g,"").replace(",","."))||0,
-   d:(r[ix("description")]||"").trim(),img:photo(r[ix("photo")]),
+   d:(r[ix("description")]||"").trim(),more:(r[ix("details")]||"").trim(),imgs:imgs,img:imgs[0]||"",
    ok:!["non","no","0","faux","epuise"].includes(norm(r[ix("disponible")]))})});
  return out}
 async function load(){
