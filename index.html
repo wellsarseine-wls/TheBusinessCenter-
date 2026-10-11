@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#faf7ef" media="(prefers-color-scheme: light)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>The Business Center — Technologies et produits en ligne</title>
@@ -13,8 +14,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#000;--panel:#121212;--ink:#f4f1e8;--muted:#a8a498;--line:#2b2820;--gold:#f2b705;--gold-ink:#1a1400;
+--gold-text:#f2b705;color-scheme:dark;
 --t1:#2a2410;--t2:#1d2430;--t3:#2b1d12;--t4:#222;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root{--bg:#faf7ef;--panel:#fff;--ink:#17140a;--muted:#6a6454;--line:#e0d9c6;--gold-text:#8a6500;color-scheme:light;--t1:#fdf0c4;--t2:#e6eefc;--t3:#fde6d2;--t4:#ececec}
+aside{box-shadow:-8px 0 30px rgba(0,0,0,.18)}#veil{background:rgba(0,0,0,.45)}}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "IBM Plex Sans",system-ui,sans-serif}
@@ -45,18 +49,18 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);bord
 .bar select{flex:1 1 180px;width:auto}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
 .prod{display:flex;flex-direction:column}
-.tile{aspect-ratio:4/3;border-radius:14px;display:grid;place-items:center;font:800 3.4rem "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;color:var(--gold);overflow:hidden;border:1px solid var(--line)}
+.tile{aspect-ratio:4/3;border-radius:14px;display:grid;place-items:center;font:800 3.4rem "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;color:var(--gold-text);overflow:hidden;border:1px solid var(--line)}
 .tile img{width:100%;height:100%;object-fit:cover}
 .prod h3{font-size:1.05rem;margin:12px 0 2px}
 .prod .d{color:var(--muted);font-size:.9rem;flex:1}
 .prod .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
-.price{font-weight:500;color:var(--gold)}
+.price{font-weight:500;color:var(--gold-text)}
 .prod .d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .tile[data-open],.prod h3[data-open]{cursor:pointer}
-.more{background:none;border:0;color:var(--gold);font:inherit;font-size:.9rem;padding:6px 0 0;text-align:left;cursor:pointer;text-decoration:underline}
+.more{background:none;border:0;color:var(--gold-text);font:inherit;font-size:.9rem;padding:6px 0 0;text-align:left;cursor:pointer;text-decoration:underline}
 .dimg{aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--t1);margin:14px 0 8px;display:grid;place-items:center;border:1px solid var(--line)}
 .dimg img{width:100%;height:100%;object-fit:contain}
-.dimg.ph{font:800 4rem "Bricolage Grotesque",sans-serif;color:var(--gold)}
+.dimg.ph{font:800 4rem "Bricolage Grotesque",sans-serif;color:var(--gold-text)}
 .thumbs{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px}
 .thumbs button{width:64px;height:64px;flex:none;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:none;cursor:pointer}
 .thumbs img{width:100%;height:100%;object-fit:cover}
@@ -103,10 +107,11 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 #lbi{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in}
 #lbs.z{display:block}
 #lbs.z #lbi{max-width:none;max-height:none;width:250%;cursor:zoom-out}
-#lb button{position:absolute;z-index:2;background:rgba(0,0,0,.65);color:#fff;border:1px solid var(--line);border-radius:999px;width:44px;height:44px;font-size:1.4rem;cursor:pointer}
+#lb button{position:absolute;z-index:2;background:rgba(0,0,0,.65);color:#fff;border:1px solid #555;border-radius:999px;width:44px;height:44px;font-size:1.4rem;cursor:pointer}
 #lbx{top:calc(env(safe-area-inset-top,0px) + 12px);right:12px}
 #lbp{left:10px;top:50%}#lbn{right:10px;top:50%}
-#lbh{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:0;right:0;text-align:center;color:var(--muted);font-size:.85rem;pointer-events:none}
+#lb,#lb button{color-scheme:dark}
+#lbh{color:#aaa!important;position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:0;right:0;text-align:center;color:var(--muted);font-size:.85rem;pointer-events:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -120,7 +125,7 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <main id="top">
 <div class="wrap hero">
 <div>
-<h1>Technologies et produits, commandés en ligne, livrés chez vous.</h1>
+<h1>Tout ce dont vous avez besoin, en quelques clics, livré chez vous.</h1>
 <p>Choisissez vos produits puis envoyez votre commande sur WhatsApp. Nous la confirmons avec vous et organisons la livraison.</p>
 <form class="search" id="sf" role="search"><input id="q" type="search" placeholder="Chercher un produit" aria-label="Rechercher un produit"><button class="btn" type="submit">Chercher</button></form>
 <div class="cta"><a class="btn alt" href="https://wa.me/2694479783" target="_blank" rel="noopener">Écrire sur WhatsApp</a><a class="btn alt" href="tel:+2694479783">Appeler</a></div>
