@@ -42,7 +42,7 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--panel);bord
 .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 22px}
 .chip{border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;padding:6px 14px;border-radius:999px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
-.bar select{width:auto;margin-left:auto}
+.bar select{flex:1 1 180px;width:auto}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px}
 .prod{display:flex;flex-direction:column}
 .tile{aspect-ratio:4/3;border-radius:14px;display:grid;place-items:center;font:800 3.4rem "Bricolage Grotesque",sans-serif;letter-spacing:-.04em;color:var(--gold);overflow:hidden;border:1px solid var(--line)}
@@ -85,7 +85,28 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 #mg{position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:25;box-shadow:0 4px 18px rgba(0,0,0,.6)}
 #mg[hidden]{display:none}
 .note{background:#2a2410;border:1px solid var(--gold);padding:10px 12px;border-radius:10px;font-size:.9rem;margin:10px 0}
-@media (max-width:700px){nav{display:none}.cartbtn{margin-left:auto}.hero{grid-template-columns:1fr}.hero img{max-width:220px;order:-1}.bar select{margin-left:0;width:100%}.brand span{font-size:1rem}}
+@media (max-width:700px){nav{display:none}.cartbtn{margin-left:auto}.hero{grid-template-columns:1fr}.hero img{max-width:220px;order:-1}.brand span{font-size:1rem}}
+@media (max-width:700px){
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tile{font-size:2.4rem}
+.prod h3{font-size:.95rem}
+.prod .d{font-size:.82rem}
+.prod .row{flex-direction:column;align-items:stretch;gap:8px}
+.prod .row .price{font-size:.95rem}
+.prod .row .btn{width:100%;text-align:center;padding:9px 8px}
+}
+#dmain{cursor:zoom-in}
+.hint{color:var(--muted);font-size:.8rem;margin:0 0 12px}
+#lb{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.97);display:flex}
+#lb[hidden]{display:none}
+#lbs{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;-webkit-overflow-scrolling:touch}
+#lbi{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in}
+#lbs.z{display:block}
+#lbs.z #lbi{max-width:none;max-height:none;width:250%;cursor:zoom-out}
+#lb button{position:absolute;z-index:2;background:rgba(0,0,0,.65);color:#fff;border:1px solid var(--line);border-radius:999px;width:44px;height:44px;font-size:1.4rem;cursor:pointer}
+#lbx{top:calc(env(safe-area-inset-top,0px) + 12px);right:12px}
+#lbp{left:10px;top:50%}#lbn{right:10px;top:50%}
+#lbh{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:0;right:0;text-align:center;color:var(--muted);font-size:.85rem;pointer-events:none}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -124,6 +145,7 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <footer><div class="wrap">© <span id="y"></span> The Business Center · +269 447 97 83 · <a href="mailto:thebusinesscenter269@gmail.com">thebusinesscenter269@gmail.com</a></div></footer>
 
 <div id="veil"></div>
+<div id="lb" hidden><button id="lbx" aria-label="Fermer la photo">✕</button><button id="lbp" aria-label="Photo précédente">‹</button><button id="lbn" aria-label="Photo suivante">›</button><div id="lbs"><img id="lbi" alt=""></div><div id="lbh">Touchez la photo pour zoomer</div></div>
 <aside id="det" aria-label="Détails du produit" aria-hidden="true">
 <div class="ah"><span></span><button class="btn alt" id="dclose">Fermer</button></div>
 <div id="dbody"></div>
@@ -164,18 +186,25 @@ let cat="Tous",q="",cart={};
 try{cart=JSON.parse(localStorage.getItem("tbc-cart")||"{}")}catch(e){}
 const save=()=>{try{localStorage.setItem("tbc-cart",JSON.stringify(cart))}catch(e){}};
 
+const CATEGORIES=["Ordinateurs","Téléphones","Accessoires","Écrans","Réseau","Audio"]; // Modifiez cette liste pour changer les catégories proposées
+const cap=s=>s?s.charAt(0).toUpperCase()+s.slice(1):s;
 function chips(){
- const cs=["Tous",...new Set(D.products.map(p=>p.c))];
- if(!cs.includes(cat))cat="Tous";
- $("#chips").innerHTML=cs.map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${esc(c)}">${esc(c)}</button>`).join("")+
- `<select id="sort" aria-label="Trier"><option value="">Trier par défaut</option><option value="a">Prix croissant</option><option value="d">Prix décroissant</option></select>`;
+ const m=new Map();
+ [...CATEGORIES,...D.products.map(p=>p.c)].forEach(c=>{const k=norm(c);if(k&&!m.has(k))m.set(k,cap(String(c).trim()))});
+ const list=[...m].sort((a,b)=>a[1].localeCompare(b[1],"fr"));
+ if(cat!=="Tous"&&!m.has(cat))cat="Tous";
+ const so=($("#sort")||{}).value||"";
+ $("#chips").innerHTML=`<select id="catsel" aria-label="Catégorie"><option value="Tous">Toutes les catégories</option>${list.map(([k,l])=>`<option value="${esc(k)}"${k===cat?" selected":""}>${esc(l)}</option>`).join("")}</select>`+
+ `<select id="sort" aria-label="Trier"><option value="">Trier par défaut</option><option value="az">Nom : A à Z</option><option value="za">Nom : Z à A</option><option value="a">Prix croissant</option><option value="d">Prix décroissant</option></select>`;
+ $("#sort").value=so;
 }
 function render(){
  const s=($("#sort")||{}).value;
- let l=D.products.filter(p=>(cat==="Tous"||p.c===cat)&&(p.n+" "+p.d).toLowerCase().includes(q));
+ let l=D.products.filter(p=>(cat==="Tous"||norm(p.c)===cat)&&(p.n+" "+p.d).toLowerCase().includes(q));
  if(s==="a")l.sort((a,b)=>a.p-b.p);if(s==="d")l.sort((a,b)=>b.p-a.p);
+ if(s==="az")l.sort((a,b)=>a.n.localeCompare(b.n,"fr",{sensitivity:"base"}));if(s==="za")l.sort((a,b)=>b.n.localeCompare(a.n,"fr",{sensitivity:"base"}));
  $("#grid").innerHTML=l.length?l.map(p=>`<article class="prod"><div class="tile" data-open="${esc(p.id)}" role="button" tabindex="0" aria-label="Voir les détails de ${esc(p.n)}" style="background:var(--t${tint(p.c)})">${p.img?`<img src="${esc(p.img)}" alt="${esc(p.n)}" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:this.alt.slice(0,2)}))">`:`<span aria-hidden="true">${esc(p.n.slice(0,2))}</span>`}</div><h3 data-open="${esc(p.id)}">${esc(p.n)}</h3><div class="d">${esc(p.d)}</div><button class="more" data-open="${esc(p.id)}">Voir les détails</button><div class="row"><span class="price">${fmt(p.p)}</span>${p.ok===false?`<button class="btn" disabled>Épuisé</button>`:`<button class="btn" data-add="${esc(p.id)}">Ajouter</button>`}</div></article>`).join(""):
- `<p class="empty">${D.error?"Impossible de charger les produits pour le moment. Écrivez-nous sur WhatsApp.":D.products.length?"Aucun produit ne correspond. Essayez un autre mot ou choisissez « Tous ».":"La boutique est en préparation. Revenez bientôt ou écrivez-nous sur WhatsApp."}</p>`;
+ `<p class="empty">${D.error?"Impossible de charger les produits pour le moment. Écrivez-nous sur WhatsApp.":D.products.length?(cat!=="Tous"&&!q?"Pas encore de produit dans cette catégorie. Écrivez-nous sur WhatsApp pour une demande.":"Aucun produit ne correspond. Essayez un autre mot ou choisissez « Toutes les catégories »."):"La boutique est en préparation. Revenez bientôt ou écrivez-nous sur WhatsApp."}</p>`;
 }
 function drawCart(){
  const ids=Object.keys(cart).filter(k=>cart[k]>0&&D.products.some(p=>p.id===k));let t=0,n=0;
@@ -188,16 +217,15 @@ function closeAll(){panel("",false)}
 
 document.addEventListener("click",e=>{
  const b=e.target.closest("button");if(!b)return;const d=b.dataset;
- if(d.c){cat=d.c;document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));render()}
  if(d.add){cart[d.add]=(cart[d.add]||0)+1;drawCart();panel("#cart",true)}
  if(d.p){cart[d.p]++;drawCart()}
  if(d.m){cart[d.m]--;drawCart()}
- if(d.th){$("#dmain").src=d.th}
+ if(d.th){$("#dmain").src=d.th;curI=Math.max(0,curIm.indexOf(d.th))}
 });
-document.addEventListener("change",e=>{if(e.target.id==="sort")render()});
+document.addEventListener("change",e=>{if(e.target.id==="sort")render();if(e.target.id==="catsel"){cat=e.target.value;render()}});
 $("#sf").addEventListener("submit",e=>{e.preventDefault();q=$("#q").value.trim().toLowerCase();render();$("#catalogue").scrollIntoView()});
 $("#open").onclick=()=>panel("#cart",true);$("#close").onclick=closeAll;$("#dclose").onclick=closeAll;$("#veil").onclick=closeAll;
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!$("#lb").hidden)$("#lb").hidden=true;else closeAll()}});
 $("#wa").onclick=()=>{
  const ids=Object.keys(cart).filter(k=>cart[k]>0&&D.products.some(p=>p.id===k));if(!ids.length)return;let t=0;
  const lines=ids.map(k=>{const p=D.products.find(x=>x.id===k);t+=p.p*cart[k];return `- ${cart[k]} × ${p.n} (${fmt(p.p)})`});
@@ -208,18 +236,28 @@ $("#wa").onclick=()=>{
 };
 
 /* Fiche produit */
+let curIm=[],curI=0;
 function openDet(id){
  const p=D.products.find(x=>x.id===id);if(!p)return;
  const im=p.imgs&&p.imgs.length?p.imgs:(p.img?[p.img]:[]);
+curIm=im;curI=0;
  const wa="https://wa.me/"+TEL+"?text="+encodeURIComponent("Bonjour The Business Center, j'ai une question sur : "+p.n+" ("+fmt(p.p)+")");
- $("#dbody").innerHTML=(im.length?`<div class="dimg"><img id="dmain" src="${esc(im[0])}" alt="${esc(p.n)}"></div>`+(im.length>1?`<div class="thumbs">${im.map((u,i)=>`<button data-th="${esc(u)}" aria-label="Photo ${i+1}"><img src="${esc(u)}" alt=""></button>`).join("")}</div>`:""):`<div class="dimg ph">${esc(p.n.slice(0,2))}</div>`)+
+ $("#dbody").innerHTML=(im.length?`<div class="dimg"><img id="dmain" src="${esc(im[0])}" alt="${esc(p.n)}"></div>`+(im.length>1?`<div class="thumbs">${im.map((u,i)=>`<button data-th="${esc(u)}" aria-label="Photo ${i+1}"><img src="${esc(u)}" alt=""></button>`).join("")}</div>`:"")+`<p class="hint">Touchez la photo pour l'agrandir</p>`:`<div class="dimg ph">${esc(p.n.slice(0,2))}</div>`)+
  `<h2>${esc(p.n)}</h2><div class="meta"><span class="tag">${esc(p.c)}</span><span class="price big">${fmt(p.p)}</span></div>`+
  (p.d?`<p class="dd">${esc(p.d)}</p>`:"")+(p.more?`<p class="dd">${esc(p.more)}</p>`:"")+
  (p.ok===false?`<button class="btn" disabled>Épuisé</button>`:`<button class="btn" data-add="${esc(p.id)}">Ajouter au panier</button>`)+
  `<a class="btn alt" href="${wa}" target="_blank" rel="noopener">Poser une question sur WhatsApp</a>`;
  panel("#det",true);$("#det").scrollTop=0;
 }
-document.addEventListener("click",e=>{const o=e.target.closest("[data-open]");if(o)openDet(o.dataset.open)});
+document.addEventListener("click",e=>{if(e.target.id==="dmain"){lbOpen(curIm,curI);return}const o=e.target.closest("[data-open]");if(o)openDet(o.dataset.open)});
+/* Visionneuse photo */
+let lbL=[],lbI=0;
+function lbShow(){$("#lbs").classList.remove("z");$("#lbi").src=lbL[lbI];$("#lbp").hidden=$("#lbn").hidden=lbL.length<2}
+function lbOpen(l,i){lbL=l;lbI=i;lbShow();$("#lb").hidden=false}
+$("#lbx").onclick=()=>{$("#lb").hidden=true};
+$("#lbp").onclick=()=>{lbI=(lbI-1+lbL.length)%lbL.length;lbShow()};
+$("#lbn").onclick=()=>{lbI=(lbI+1)%lbL.length;lbShow()};
+$("#lbi").onclick=()=>{const s=$("#lbs");s.classList.toggle("z");if(s.classList.contains("z")){s.scrollLeft=(s.scrollWidth-s.clientWidth)/2;s.scrollTop=(s.scrollHeight-s.clientHeight)/2}};
 document.addEventListener("keydown",e=>{const o=e.target.closest&&e.target.closest(".tile[data-open]");if(o&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openDet(o.dataset.open)}});
 
 /* Lecture du Google Sheets */
