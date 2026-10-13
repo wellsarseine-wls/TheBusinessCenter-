@@ -1,0 +1,94 @@
+// ===== The Business Center : notification à chaque nouveau produit =====
+// À coller dans le tableau « Produit TBC » : Extensions > Apps Script.
+// La clé secrète OneSignal n'est PAS écrite ici : elle se met dans
+// Paramètres du projet > Propriétés du script (nom : ONESIGNAL_API_KEY).
+
+const SITE_URL = "https://wellsarseine-wls.github.io/TheBusinessCenter-/";
+const APP_ID = "62fc4401-317c-4404-97f2-88d110175d73";
+
+// Vérifie le tableau et envoie une notification pour chaque nouveau produit.
+function verifierNouveauxProduits() {
+  const props = PropertiesService.getScriptProperties();
+  const apiKey = props.getProperty("ONESIGNAL_API_KEY");
+  if (!apiKey) {
+    throw new Error("Clé manquante : ajoutez ONESIGNAL_API_KEY dans Paramètres du projet > Propriétés du script.");
+  }
+
+  const feuille = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  const lignes = feuille.getDataRange().getValues();
+  if (lignes.length < 2) return;
+
+  const entetes = lignes[0].map(function (h) { return String(h).trim().toLowerCase(); });
+  const iNom = entetes.indexOf("nom");
+  if (iNom < 0) throw new Error("Colonne « nom » introuvable en ligne 1.");
+
+  const noms = lignes.slice(1)
+    .map(function (l) { return String(l[iNom]).trim(); })
+    .filter(function (n) { return n; });
+
+  const memoire = props.getProperty("PRODUITS_CONNUS");
+  // Première exécution : on mémorise les produits existants, sans notifier personne.
+  if (memoire === null) {
+    props.setProperty("PRODUITS_CONNUS", JSON.stringify(noms.map(cle)));
+    return;
+  }
+
+  const connus = JSON.parse(memoire);
+  const nouveaux = noms.filter(function (n) { return connus.indexOf(cle(n)) < 0; });
+  if (!nouveaux.length) return;
+
+  let titre, corps;
+  if (nouveaux.length === 1) {
+    titre = "Nouveau produit : " + nouveaux[0];
+    corps = "Découvrez-le maintenant sur The Business Center.";
+  } else {
+    titre = nouveaux.length + " nouveaux produits";
+    corps = nouveaux.slice(0, 3).join(", ") + (nouveaux.length > 3 ? "…" : "") + " : à découvrir maintenant.";
+  }
+
+  envoyer(apiKey, titre, corps);
+
+  // On ne mémorise qu'après un envoi réussi : en cas d'échec, on réessaiera.
+  const maj = connus.concat(nouveaux.map(cle));
+  props.setProperty("PRODUITS_CONNUS", JSON.stringify(maj));
+}
+
+// Envoie une notification de test à tous les abonnés.
+function envoyerTest() {
+  const apiKey = PropertiesService.getScriptProperties().getProperty("ONESIGNAL_API_KEY");
+  if (!apiKey) throw new Error("Clé manquante : ajoutez ONESIGNAL_API_KEY dans les propriétés du script.");
+  envoyer(apiKey, "Test The Business Center", "Si vous lisez ceci, les notifications fonctionnent.");
+}
+
+// À lancer une seule fois : vérifie le tableau toutes les 10 minutes.
+function installerDeclencheur() {
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === "verifierNouveauxProduits") ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger("verifierNouveauxProduits").timeBased().everyMinutes(10).create();
+}
+
+function cle(nom) {
+  return String(nom).trim().toLowerCase();
+}
+
+function envoyer(apiKey, titre, corps) {
+  const reponse = UrlFetchApp.fetch("https://api.onesignal.com/notifications?c=push", {
+    method: "post",
+    contentType: "application/json",
+    headers: { Authorization: "Key " + apiKey },
+    payload: JSON.stringify({
+      app_id: APP_ID,
+      target_channel: "push",
+      included_segments: ["Subscribed Users"],
+      headings: { en: titre, fr: titre },
+      contents: { en: corps, fr: corps },
+      url: SITE_URL
+    }),
+    muteHttpExceptions: true
+  });
+  const code = reponse.getResponseCode();
+  if (code < 200 || code >= 300) {
+    throw new Error("OneSignal a répondu " + code + " : " + reponse.getContentText());
+  }
+}
