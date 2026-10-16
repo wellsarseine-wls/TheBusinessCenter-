@@ -23,6 +23,7 @@
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#faf7ef;--panel:#fff;--ink:#17140a;--muted:#6a6454;--line:#e0d9c6;--gold-text:#8a6500;color-scheme:light;--t1:#fdf0c4;--t2:#e6eefc;--t3:#fde6d2;--t4:#ececec}:root:not([data-theme="dark"]) aside{box-shadow:-8px 0 30px rgba(0,0,0,.18)}:root:not([data-theme="dark"]) #veil{background:rgba(0,0,0,.45)}}
 :root[data-theme="light"]{--bg:#faf7ef;--panel:#fff;--ink:#17140a;--muted:#6a6454;--line:#e0d9c6;--gold-text:#8a6500;color-scheme:light;--t1:#fdf0c4;--t2:#e6eefc;--t3:#fde6d2;--t4:#ececec}:root[data-theme="light"] aside{box-shadow:-8px 0 30px rgba(0,0,0,.18)}:root[data-theme="light"] #veil{background:rgba(0,0,0,.45)}
+[hidden]{display:none!important}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px);scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "IBM Plex Sans",system-ui,sans-serif}
@@ -117,6 +118,12 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 #lb,#lb button{color-scheme:dark}
 #lbh{color:#aaa!important;position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:0;right:0;text-align:center;color:var(--muted);font-size:.85rem;pointer-events:none}
 .iconbtn{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:999px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;flex:none}
+#set details.acc{border-bottom:1px solid var(--line)}
+#set details.acc>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 2px;font:600 1.05rem "Bricolage Grotesque",system-ui,sans-serif}
+#set details.acc>summary::-webkit-details-marker{display:none}
+#set details.acc>summary::after{content:"";flex:none;width:9px;height:9px;border-inline-end:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s;margin-inline-end:4px}
+#set details.acc[open]>summary::after{transform:rotate(-135deg)}
+.accb{padding:0 2px 16px}
 .seg{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
 .seg button{flex:1 1 90px;background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink);border-color:var(--gold)}
@@ -126,6 +133,21 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 .newtag{position:absolute;top:8px;inset-inline-start:8px;background:var(--gold);color:var(--gold-ink);font:500 .72rem "IBM Plex Sans",sans-serif;padding:2px 9px;border-radius:999px}
 .newbar{border:1px solid var(--gold);color:var(--gold-text);border-radius:10px;padding:8px 12px;margin:0 0 12px;font-size:.92rem}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 24px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;z-index:70;font-size:.9rem}
+.disc{color:var(--gold-text);font-size:.95rem}
+.tbar{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin:10px 0 4px}
+#tfill{height:100%;width:100%;background:var(--gold);transition:width .25s linear}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}
+.gc{position:relative;aspect-ratio:1;perspective:600px;border:0;background:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.gc i{position:absolute;inset:0;display:grid;place-items:center;border-radius:12px;font-style:normal;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .35s}
+.gc .f{background:var(--gold);color:var(--gold-ink);font:800 1.5rem "Bricolage Grotesque",sans-serif;transform:rotateY(0)}
+.gc .b{background:var(--panel);border:1px solid var(--line);font-size:1.8rem;transform:rotateY(180deg);overflow:hidden}
+.gc.on .f{transform:rotateY(-180deg)}
+.gc.on .b{transform:rotateY(0)}
+.gc.ok .b{border-color:var(--gold)}
+.gc .b img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.gwin{background:var(--gold);color:var(--gold-ink);padding:12px 14px;border-radius:12px;margin:10px 0;line-height:1.5}
+#gres .btn{width:100%;text-align:center;margin-bottom:10px}
+#game #gstart{width:100%;text-align:center}
 .sp{color:var(--muted);font-size:.92rem;margin:4px 0 10px}
 .srow{display:flex;flex-direction:column;gap:10px;margin:10px 0 6px}
 .srow .btn{text-align:center}
@@ -146,7 +168,7 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <h1 data-i="hero_h1">Tout ce dont vous avez besoin, en quelques clics, livré chez vous.</h1>
 <p data-i="hero_p">Choisissez vos produits puis envoyez votre commande sur WhatsApp. Nous la confirmons avec vous et organisons la livraison.</p>
 <form class="search" id="sf" role="search"><input id="q" type="search" placeholder="Chercher un produit" data-ip="search_ph" aria-label="Rechercher"><button class="btn" type="submit" data-i="search_btn">Chercher</button></form>
-<div class="cta"><a class="btn alt" href="https://wa.me/2694479783" target="_blank" rel="noopener" data-i="wa_write">Écrire sur WhatsApp</a><a class="btn alt" href="tel:+2694479783" data-i="call">Appeler</a></div>
+<div class="cta"><button class="btn" id="gopen" data-i="game_btn">🎁 Jouer et gagner jusqu'à 10 %</button><a class="btn alt" href="https://wa.me/2694479783" target="_blank" rel="noopener" data-i="wa_write">Écrire sur WhatsApp</a><a class="btn alt" href="tel:+2694479783" data-i="call">Appeler</a></div>
 </div>
 <img id="lg2" alt="Logo The Business Center">
 </div>
@@ -179,6 +201,7 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <aside id="cart" aria-label="Panier" aria-hidden="true">
 <div class="ah"><h2 style="font-size:1.4rem" data-i="cart_title">Votre panier</h2><button class="btn alt" id="close" data-i="close">Fermer</button></div>
 <div class="items" id="items"></div>
+<div class="tot disc" id="discrow" hidden><span id="disctxt"></span><span id="discamt"></span></div>
 <div class="tot"><span data-i="total">Total</span><span id="tot"></span></div>
 <div class="f">
 <label><span data-i="your_name">Votre nom</span><input id="cn" autocomplete="name"></label>
@@ -187,24 +210,29 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <button class="btn" id="wa" data-i="order_wa">Commander sur WhatsApp</button>
 </aside>
 
+<aside id="game" aria-label="Jeu" aria-hidden="true">
+<div class="ah"><h2 style="font-size:1.4rem" data-i="game_title">Trouvez le logo !</h2><button class="btn alt" id="gclose" data-i="close">Fermer</button></div>
+<p class="sp" data-i="game_rules"></p>
+<div class="tbar"><div id="tfill"></div></div>
+<p class="sp" id="gtime" aria-live="polite"></p>
+<div class="g4" id="gboard"></div>
+<div id="gres"></div>
+<button class="btn" id="gstart" data-i="game_start">Commencer</button>
+</aside>
+
 <aside id="set" aria-label="Paramètres" aria-hidden="true">
 <div class="ah"><h2 style="font-size:1.4rem" data-i="set_title">Paramètres</h2><button class="btn alt" id="sclose" data-i="close">Fermer</button></div>
-<h3 data-i="set_theme">Thème</h3>
-<div class="seg" id="thm"><button data-theme="auto" data-i="th_auto">Automatique</button><button data-theme="light" data-i="th_light">Clair</button><button data-theme="dark" data-i="th_dark">Sombre</button></div>
-<h3 data-i="set_lang">Langue</h3>
-<div class="seg" id="lng"><button data-lang="fr">Français</button><button data-lang="en">English</button><button data-lang="ar">العربية</button></div>
-<p class="sp" data-i="set_lang_note"></p>
-<h3 data-i="notif_title">Notifications</h3>
-<p class="sp" data-i="notif_p"></p>
+<div style="margin-top:8px">
+<details class="acc" name="setacc"><summary data-i="set_theme"></summary><div class="accb"><div class="seg" id="thm"><button data-theme="auto" data-i="th_auto">Automatique</button><button data-theme="light" data-i="th_light">Clair</button><button data-theme="dark" data-i="th_dark">Sombre</button></div></div></details>
+<details class="acc" name="setacc"><summary data-i="set_lang"></summary><div class="accb"><div class="seg" id="lng"><button data-lang="fr">Français</button><button data-lang="en">English</button><button data-lang="ar">العربية</button></div><p class="sp" data-i="set_lang_note"></p></div></details>
+<details class="acc" name="setacc"><summary data-i="notif_title"></summary><div class="accb"><p class="sp" data-i="notif_p"></p>
 <div class="srow"><button class="btn" id="notif" disabled>Activer les notifications</button></div>
-<p class="sp" id="notifmsg" hidden></p>
-<h3 data-i="set_about">L'entreprise</h3>
-<p class="sp"><b>The Business Center</b></p>
+<p class="sp" id="notifmsg" hidden></p></div></details>
+<details class="acc" name="setacc"><summary data-i="set_about"></summary><div class="accb"><p class="sp"><b>The Business Center</b></p>
 <p class="sp" data-i="about_p"></p><p class="sp" data-i="about_p2"></p>
-<p class="sp" id="sinfo" hidden></p>
-<div class="srow"><button class="btn alt" id="share" data-i="share_btn">Partager le site</button><a class="btn" href="https://wa.me/2694479783" target="_blank" rel="noopener">WhatsApp +269 447 97 83</a><a class="btn alt" href="tel:+2694479783"><span data-i="call">Appeler</span> +269 447 97 83</a><a class="btn alt" href="mailto:thebusinesscenter269@gmail.com">thebusinesscenter269@gmail.com</a></div>
-<h3 data-i="set_deliv">Livraison et conditions</h3>
-<div class="cg">
+<p class="sp" id="sinfo" hidden></p></div></details>
+<details class="acc" name="setacc"><summary data-i="contact_title"></summary><div class="accb"><div class="srow"><button class="btn alt" id="share" data-i="share_btn">Partager le site</button><a class="btn" href="https://wa.me/2694479783" target="_blank" rel="noopener">WhatsApp +269 447 97 83</a><a class="btn alt" href="tel:+2694479783"><span data-i="call">Appeler</span> +269 447 97 83</a><a class="btn alt" href="mailto:thebusinesscenter269@gmail.com">thebusinesscenter269@gmail.com</a></div></div></details>
+<details class="acc" name="setacc"><summary data-i="set_deliv"></summary><div class="accb"><div class="cg">
 <h4 data-i="c1t"></h4><p class="sp" data-i="c1"></p>
 <h4 data-i="c2t"></h4><p class="sp" data-i="c2"></p>
 <h4 data-i="c3t"></h4><p class="sp" data-i="c3"></p>
@@ -212,6 +240,7 @@ label{font-size:.9rem;color:var(--muted);display:grid;gap:4px}
 <h4 data-i="c5t"></h4><p class="sp" data-i="c5"></p>
 <h4 data-i="c6t"></h4><p class="sp" data-i="c6"></p>
 <h4 data-i="engt"></h4><p class="sp" data-i="eng"></p><p class="sp" data-i="thanks"></p>
+</div></div></details>
 </div>
 </aside>
 
@@ -229,9 +258,9 @@ const SAMPLE=[
 /* ===================== */
 const ADRESSE="",HORAIRES=""; // Écrivez ici l'adresse et les horaires de la boutique (affichés dans Paramètres)
 const I={
-fr:{nav_shop:"Boutique",nav_contact:"Contact",cart:"Panier",settings:"Paramètres",hero_h1:"Tout ce dont vous avez besoin, en quelques clics, livré chez vous.",hero_p:"Choisissez vos produits puis envoyez votre commande sur WhatsApp. Nous la confirmons avec vous et organisons la livraison.",search_ph:"Chercher un produit",search_btn:"Chercher",wa_write:"Écrire sur WhatsApp",call:"Appeler",shop_title:"Boutique",contact_title:"Nous contacter",contact_p:"Une question, un devis, un produit introuvable ? Écrivez-nous ou appelez-nous.",email:"E-mail : ",close:"Fermer",cart_title:"Votre panier",total:"Total",your_name:"Votre nom",address:"Adresse de livraison",order_wa:"Commander sur WhatsApp",cart_empty:"Votre panier est vide. Ajoutez un produit depuis la boutique.",add:"Ajouter",add_cart:"Ajouter au panier",details:"Voir les détails",soldout:"Épuisé",ask_wa:"Poser une question sur WhatsApp",hint_img:"Touchez la photo pour l'agrandir",lb_hint:"Touchez la photo pour zoomer",all_cats:"Toutes les catégories",sort_def:"Trier par défaut",sort_az:"Nom : A à Z",sort_za:"Nom : Z à A",sort_pa:"Prix croissant",sort_pd:"Prix décroissant",loading:"Chargement des produits…",err:"Impossible de charger les produits pour le moment. Écrivez-nous sur WhatsApp.",none_cat:"Pas encore de produit dans cette catégorie. Écrivez-nous sur WhatsApp pour une demande.",none_search:"Aucun produit ne correspond. Essayez un autre mot ou choisissez « Toutes les catégories ».",prep:"La boutique est en préparation. Revenez bientôt ou écrivez-nous sur WhatsApp.",set_title:"Paramètres",set_theme:"Thème",th_auto:"Automatique",th_light:"Clair",th_dark:"Sombre",set_lang:"Langue",set_lang_note:"Les noms et descriptions des produits restent dans la langue écrite dans le tableau.",set_about:"À propos de nous",about_p:"Nous sommes une boutique en ligne dédiée à la vente de produits soigneusement sélectionnés pour répondre à vos besoins. Notre priorité : vous offrir une expérience d’achat simple, fiable et pratique, avec un service client attentif et une livraison adaptée.",set_deliv:"🚚 Conditions générales de livraison",about_p2:"La qualité, la confiance et votre satisfaction au cœur de nos engagements.",c1t:"1. Zone de livraison",c1:"Nous assurons la livraison de vos commandes aux Comores, selon les zones desservies et les modalités disponibles.",c2t:"2. Frais de livraison",c2:"Les frais de livraison sont déterminés en fonction de la destination et sont communiqués au client avant la validation de la commande.",c3t:"3. Délais de livraison",c3:"Le délai estimé est communiqué lors de la confirmation de la commande. Il peut varier selon la destination et la disponibilité du produit.",c4t:"4. Validation des commandes",c4:"Toute commande doit être confirmée avant son expédition. Le client est tenu de fournir des coordonnées exactes et un numéro de téléphone joignable.",c5t:"5. Réception des commandes",c5:"Le client est invité à vérifier l’état du produit à la réception et à signaler immédiatement toute anomalie constatée.",c6t:"6. Absence du client",c6:"En cas d’absence du destinataire ou d’informations de livraison incorrectes, des frais supplémentaires ou un report de livraison peuvent s’appliquer.",engt:"Notre engagement",eng:"Nous mettons tout en œuvre pour assurer une livraison fiable, soignée et dans les meilleurs délais, afin de vous garantir une expérience d’achat satisfaisante.",thanks:"Merci pour votre confiance.",share_btn:"Partager le site",share_text:"Découvrez The Business Center : technologies et produits en ligne, livrés chez vous.",copied:"Lien copié",new_tag:"Nouveau",new1:"1 nouveau produit cette semaine",newn:"{n} nouveaux produits cette semaine",notif_title:"Notifications",notif_p:"Recevez une notification quand un nouveau produit est ajouté.",notif_on:"Activer les notifications",notif_off:"Désactiver les notifications",notif_state_on:"Notifications activées.",notif_denied:"Les notifications sont bloquées. Autorisez-les dans les réglages de votre téléphone, puis revenez ici.",notif_na:"Les notifications ne sont pas disponibles pour le moment sur cet appareil.",addr:"Adresse",hours:"Horaires",cat_ordinateurs:"Ordinateurs",cat_telephones:"Téléphones",cat_accessoires:"Accessoires",cat_ecrans:"Écrans",cat_reseau:"Réseau",cat_audio:"Audio"},
-en:{nav_shop:"Shop",nav_contact:"Contact",cart:"Cart",settings:"Settings",hero_h1:"Everything you need, in a few clicks, delivered to your door.",hero_p:"Pick your products, then send your order on WhatsApp. We confirm it with you and arrange delivery.",search_ph:"Search for a product",search_btn:"Search",wa_write:"Message on WhatsApp",call:"Call",shop_title:"Shop",contact_title:"Contact us",contact_p:"A question, a quote, a product you cannot find? Write to us or call us.",email:"Email: ",close:"Close",cart_title:"Your cart",total:"Total",your_name:"Your name",address:"Delivery address",order_wa:"Order on WhatsApp",cart_empty:"Your cart is empty. Add a product from the shop.",add:"Add",add_cart:"Add to cart",details:"View details",soldout:"Sold out",ask_wa:"Ask a question on WhatsApp",hint_img:"Tap the photo to enlarge it",lb_hint:"Tap the photo to zoom",all_cats:"All categories",sort_def:"Default order",sort_az:"Name: A to Z",sort_za:"Name: Z to A",sort_pa:"Price: low to high",sort_pd:"Price: high to low",loading:"Loading products…",err:"We cannot load the products right now. Message us on WhatsApp.",none_cat:"No products in this category yet. Message us on WhatsApp to make a request.",none_search:"No matching product. Try another word or choose “All categories”.",prep:"The shop is being prepared. Come back soon or message us on WhatsApp.",set_title:"Settings",set_theme:"Theme",th_auto:"Automatic",th_light:"Light",th_dark:"Dark",set_lang:"Language",set_lang_note:"Product names and descriptions stay in the language written in the sheet.",set_about:"About us",about_p:"We are an online shop dedicated to selling carefully selected products that meet your needs. Our priority: to offer you a simple, reliable and convenient shopping experience, with attentive customer service and delivery suited to you.",set_deliv:"🚚 General delivery terms",about_p2:"Quality, trust and your satisfaction are at the heart of our commitments.",c1t:"1. Delivery area",c1:"We deliver your orders across the Comoros, depending on the areas served and the arrangements available.",c2t:"2. Delivery fees",c2:"Delivery fees depend on the destination and are communicated to the customer before the order is confirmed.",c3t:"3. Delivery times",c3:"The estimated time is communicated when the order is confirmed. It may vary depending on the destination and product availability.",c4t:"4. Order confirmation",c4:"Every order must be confirmed before it is shipped. The customer must provide accurate contact details and a reachable phone number.",c5t:"5. Receiving your order",c5:"The customer is invited to check the condition of the product on receipt and to report any problem immediately.",c6t:"6. Customer not present",c6:"If the recipient is absent or the delivery information is incorrect, additional fees or a delay in delivery may apply.",engt:"Our commitment",eng:"We do everything we can to ensure reliable, careful delivery as quickly as possible, so that you have a satisfying shopping experience.",thanks:"Thank you for your trust.",share_btn:"Share the site",share_text:"Discover The Business Center: technology and products online, delivered to your door.",copied:"Link copied",new_tag:"New",new1:"1 new product this week",newn:"{n} new products this week",notif_title:"Notifications",notif_p:"Get a notification when a new product is added.",notif_on:"Turn on notifications",notif_off:"Turn off notifications",notif_state_on:"Notifications are on.",notif_denied:"Notifications are blocked. Allow them in your phone settings, then come back here.",notif_na:"Notifications are not available on this device right now.",addr:"Address",hours:"Opening hours",cat_ordinateurs:"Computers",cat_telephones:"Phones",cat_accessoires:"Accessories",cat_ecrans:"Screens",cat_reseau:"Network",cat_audio:"Audio"},
-ar:{nav_shop:"المتجر",nav_contact:"اتصل بنا",cart:"السلة",settings:"الإعدادات",hero_h1:"كل ما تحتاجه، ببضع نقرات، يصلك إلى بابك.",hero_p:"اختر منتجاتك ثم أرسل طلبك عبر واتساب. نؤكده معك وننظم التوصيل.",search_ph:"ابحث عن منتج",search_btn:"بحث",wa_write:"راسلنا على واتساب",call:"اتصل",shop_title:"المتجر",contact_title:"تواصل معنا",contact_p:"لديك سؤال أو تريد عرض سعر أو لم تجد منتجًا؟ راسلنا أو اتصل بنا.",email:"البريد الإلكتروني: ",close:"إغلاق",cart_title:"سلتك",total:"المجموع",your_name:"اسمك",address:"عنوان التوصيل",order_wa:"اطلب عبر واتساب",cart_empty:"سلتك فارغة. أضف منتجًا من المتجر.",add:"أضف",add_cart:"أضف إلى السلة",details:"عرض التفاصيل",soldout:"نفد",ask_wa:"اسأل عبر واتساب",hint_img:"المس الصورة لتكبيرها",lb_hint:"المس الصورة للتكبير",all_cats:"كل الفئات",sort_def:"الترتيب الافتراضي",sort_az:"الاسم: من أ إلى ي",sort_za:"الاسم: من ي إلى أ",sort_pa:"السعر: من الأقل إلى الأعلى",sort_pd:"السعر: من الأعلى إلى الأقل",loading:"جارٍ تحميل المنتجات…",err:"تعذّر تحميل المنتجات حاليًا. راسلنا على واتساب.",none_cat:"لا توجد منتجات في هذه الفئة بعد. راسلنا على واتساب لتقديم طلبك.",none_search:"لا يوجد منتج مطابق. جرّب كلمة أخرى أو اختر «كل الفئات».",prep:"المتجر قيد التحضير. عد قريبًا أو راسلنا على واتساب.",set_title:"الإعدادات",set_theme:"المظهر",th_auto:"تلقائي",th_light:"فاتح",th_dark:"داكن",set_lang:"اللغة",set_lang_note:"تبقى أسماء المنتجات وأوصافها باللغة المكتوبة في الجدول.",set_about:"من نحن",about_p:"نحن متجر إلكتروني متخصص في بيع منتجات مختارة بعناية لتلبية احتياجاتكم. أولويتنا أن نقدّم لكم تجربة شراء بسيطة وموثوقة وعملية، مع خدمة عملاء مهتمة وتوصيل مناسب.",set_deliv:"🚚 الشروط العامة للتوصيل",about_p2:"الجودة والثقة ورضاكم في صميم التزاماتنا.",c1t:"1. منطقة التوصيل",c1:"نؤمّن توصيل طلباتكم داخل جزر القمر، بحسب المناطق المخدومة والإمكانيات المتاحة.",c2t:"2. رسوم التوصيل",c2:"تُحدَّد رسوم التوصيل حسب الوجهة، وتُبلَّغ للعميل قبل تأكيد الطلب.",c3t:"3. مدة التوصيل",c3:"تُبلَّغ المدة التقديرية عند تأكيد الطلب، وقد تختلف حسب الوجهة وتوفر المنتج.",c4t:"4. تأكيد الطلبات",c4:"يجب تأكيد كل طلب قبل شحنه. وعلى العميل تقديم بيانات صحيحة ورقم هاتف يمكن الوصول إليه.",c5t:"5. استلام الطلبات",c5:"يُرجى من العميل فحص حالة المنتج عند الاستلام والإبلاغ فورًا عن أي ملاحظة.",c6t:"6. غياب العميل",c6:"في حال غياب المستلم أو عدم صحة معلومات التوصيل، قد تُطبَّق رسوم إضافية أو يُؤجَّل التوصيل.",engt:"التزامنا",eng:"نبذل كل جهدنا لضمان توصيل موثوق وبعناية وفي أقرب وقت ممكن، لنضمن لكم تجربة شراء مُرضية.",thanks:"شكرًا لثقتكم.",share_btn:"مشاركة الموقع",share_text:"اكتشفوا ذا بزنس سنتر: تقنيات ومنتجات عبر الإنترنت، تصلكم إلى بابكم.",copied:"تم نسخ الرابط",new_tag:"جديد",new1:"منتج جديد واحد هذا الأسبوع",newn:"{n} منتجات جديدة هذا الأسبوع",notif_title:"الإشعارات",notif_p:"احصل على إشعار عند إضافة منتج جديد.",notif_on:"تفعيل الإشعارات",notif_off:"إيقاف الإشعارات",notif_state_on:"الإشعارات مفعّلة.",notif_denied:"الإشعارات محظورة. اسمح بها من إعدادات هاتفك ثم عد إلى هنا.",notif_na:"الإشعارات غير متاحة حاليًا على هذا الجهاز.",addr:"العنوان",hours:"ساعات العمل",cat_ordinateurs:"حواسيب",cat_telephones:"هواتف",cat_accessoires:"إكسسوارات",cat_ecrans:"شاشات",cat_reseau:"شبكات",cat_audio:"صوتيات"}
+fr:{nav_shop:"Boutique",nav_contact:"Contact",cart:"Panier",settings:"Paramètres",hero_h1:"Tout ce dont vous avez besoin, en quelques clics, livré chez vous.",hero_p:"Choisissez vos produits puis envoyez votre commande sur WhatsApp. Nous la confirmons avec vous et organisons la livraison.",search_ph:"Chercher un produit",search_btn:"Chercher",wa_write:"Écrire sur WhatsApp",call:"Appeler",shop_title:"Boutique",contact_title:"Nous contacter",contact_p:"Une question, un devis, un produit introuvable ? Écrivez-nous ou appelez-nous.",email:"E-mail : ",close:"Fermer",cart_title:"Votre panier",total:"Total",your_name:"Votre nom",address:"Adresse de livraison",order_wa:"Commander sur WhatsApp",cart_empty:"Votre panier est vide. Ajoutez un produit depuis la boutique.",add:"Ajouter",add_cart:"Ajouter au panier",details:"Voir les détails",soldout:"Épuisé",ask_wa:"Poser une question sur WhatsApp",hint_img:"Touchez la photo pour l'agrandir",lb_hint:"Touchez la photo pour zoomer",all_cats:"Toutes les catégories",sort_def:"Trier par défaut",sort_az:"Nom : A à Z",sort_za:"Nom : Z à A",sort_pa:"Prix croissant",sort_pd:"Prix décroissant",loading:"Chargement des produits…",err:"Impossible de charger les produits pour le moment. Écrivez-nous sur WhatsApp.",none_cat:"Pas encore de produit dans cette catégorie. Écrivez-nous sur WhatsApp pour une demande.",none_search:"Aucun produit ne correspond. Essayez un autre mot ou choisissez « Toutes les catégories ».",prep:"La boutique est en préparation. Revenez bientôt ou écrivez-nous sur WhatsApp.",set_title:"Paramètres",set_theme:"Thème",th_auto:"Automatique",th_light:"Clair",th_dark:"Sombre",set_lang:"Langue",set_lang_note:"Les noms et descriptions des produits restent dans la langue écrite dans le tableau.",set_about:"À propos de nous",about_p:"Nous sommes une boutique en ligne dédiée à la vente de produits soigneusement sélectionnés pour répondre à vos besoins. Notre priorité : vous offrir une expérience d’achat simple, fiable et pratique, avec un service client attentif et une livraison adaptée.",set_deliv:"🚚 Conditions générales de livraison",about_p2:"La qualité, la confiance et votre satisfaction au cœur de nos engagements.",c1t:"1. Zone de livraison",c1:"Nous assurons la livraison de vos commandes aux Comores, selon les zones desservies et les modalités disponibles.",c2t:"2. Frais de livraison",c2:"Les frais de livraison sont déterminés en fonction de la destination et sont communiqués au client avant la validation de la commande.",c3t:"3. Délais de livraison",c3:"Le délai estimé est communiqué lors de la confirmation de la commande. Il peut varier selon la destination et la disponibilité du produit.",c4t:"4. Validation des commandes",c4:"Toute commande doit être confirmée avant son expédition. Le client est tenu de fournir des coordonnées exactes et un numéro de téléphone joignable.",c5t:"5. Réception des commandes",c5:"Le client est invité à vérifier l’état du produit à la réception et à signaler immédiatement toute anomalie constatée.",c6t:"6. Absence du client",c6:"En cas d’absence du destinataire ou d’informations de livraison incorrectes, des frais supplémentaires ou un report de livraison peuvent s’appliquer.",engt:"Notre engagement",eng:"Nous mettons tout en œuvre pour assurer une livraison fiable, soignée et dans les meilleurs délais, afin de vous garantir une expérience d’achat satisfaisante.",thanks:"Merci pour votre confiance.",share_btn:"Partager le site",share_text:"Découvrez The Business Center : technologies et produits en ligne, livrés chez vous.",copied:"Lien copié",new_tag:"Nouveau",new1:"1 nouveau produit cette semaine",newn:"{n} nouveaux produits cette semaine",notif_title:"Notifications",notif_p:"Recevez une notification quand un nouveau produit est ajouté.",notif_on:"Activer les notifications",notif_off:"Désactiver les notifications",notif_state_on:"Notifications activées.",notif_denied:"Les notifications sont bloquées. Autorisez-les dans les réglages de votre téléphone, puis revenez ici.",notif_na:"Les notifications ne sont pas disponibles pour le moment sur cet appareil.",game_btn:"🎁 Jouer et gagner jusqu'à 10 %",game_title:"Trouvez le logo !",game_rules:"Retrouvez les 2 cartes avec notre logo en 60 secondes. Moins de 30 secondes : 10 % de réduction. Entre 30 et 60 secondes : 5 %. Une partie par jour.",game_start:"Commencer",game_time:"Temps :",game_win10:"Bravo ! Vous avez gagné 10 % de réduction.",game_win5:"Bravo ! Vous avez gagné 5 % de réduction.",game_code:"Votre code :",game_valid:"Valable 24 h. Il est appliqué automatiquement dans votre panier et envoyé avec votre commande WhatsApp.",game_lose:"Temps écoulé. Retentez votre chance demain !",game_done:"Vous avez déjà joué aujourd'hui. Revenez demain !",game_use:"Voir mon panier",game_active:"Votre réduction est active :",disc_label:"Réduction",addr:"Adresse",hours:"Horaires",cat_ordinateurs:"Ordinateurs",cat_telephones:"Téléphones",cat_accessoires:"Accessoires",cat_ecrans:"Écrans",cat_reseau:"Réseau",cat_audio:"Audio"},
+en:{nav_shop:"Shop",nav_contact:"Contact",cart:"Cart",settings:"Settings",hero_h1:"Everything you need, in a few clicks, delivered to your door.",hero_p:"Pick your products, then send your order on WhatsApp. We confirm it with you and arrange delivery.",search_ph:"Search for a product",search_btn:"Search",wa_write:"Message on WhatsApp",call:"Call",shop_title:"Shop",contact_title:"Contact us",contact_p:"A question, a quote, a product you cannot find? Write to us or call us.",email:"Email: ",close:"Close",cart_title:"Your cart",total:"Total",your_name:"Your name",address:"Delivery address",order_wa:"Order on WhatsApp",cart_empty:"Your cart is empty. Add a product from the shop.",add:"Add",add_cart:"Add to cart",details:"View details",soldout:"Sold out",ask_wa:"Ask a question on WhatsApp",hint_img:"Tap the photo to enlarge it",lb_hint:"Tap the photo to zoom",all_cats:"All categories",sort_def:"Default order",sort_az:"Name: A to Z",sort_za:"Name: Z to A",sort_pa:"Price: low to high",sort_pd:"Price: high to low",loading:"Loading products…",err:"We cannot load the products right now. Message us on WhatsApp.",none_cat:"No products in this category yet. Message us on WhatsApp to make a request.",none_search:"No matching product. Try another word or choose “All categories”.",prep:"The shop is being prepared. Come back soon or message us on WhatsApp.",set_title:"Settings",set_theme:"Theme",th_auto:"Automatic",th_light:"Light",th_dark:"Dark",set_lang:"Language",set_lang_note:"Product names and descriptions stay in the language written in the sheet.",set_about:"About us",about_p:"We are an online shop dedicated to selling carefully selected products that meet your needs. Our priority: to offer you a simple, reliable and convenient shopping experience, with attentive customer service and delivery suited to you.",set_deliv:"🚚 General delivery terms",about_p2:"Quality, trust and your satisfaction are at the heart of our commitments.",c1t:"1. Delivery area",c1:"We deliver your orders across the Comoros, depending on the areas served and the arrangements available.",c2t:"2. Delivery fees",c2:"Delivery fees depend on the destination and are communicated to the customer before the order is confirmed.",c3t:"3. Delivery times",c3:"The estimated time is communicated when the order is confirmed. It may vary depending on the destination and product availability.",c4t:"4. Order confirmation",c4:"Every order must be confirmed before it is shipped. The customer must provide accurate contact details and a reachable phone number.",c5t:"5. Receiving your order",c5:"The customer is invited to check the condition of the product on receipt and to report any problem immediately.",c6t:"6. Customer not present",c6:"If the recipient is absent or the delivery information is incorrect, additional fees or a delay in delivery may apply.",engt:"Our commitment",eng:"We do everything we can to ensure reliable, careful delivery as quickly as possible, so that you have a satisfying shopping experience.",thanks:"Thank you for your trust.",share_btn:"Share the site",share_text:"Discover The Business Center: technology and products online, delivered to your door.",copied:"Link copied",new_tag:"New",new1:"1 new product this week",newn:"{n} new products this week",notif_title:"Notifications",notif_p:"Get a notification when a new product is added.",notif_on:"Turn on notifications",notif_off:"Turn off notifications",notif_state_on:"Notifications are on.",notif_denied:"Notifications are blocked. Allow them in your phone settings, then come back here.",notif_na:"Notifications are not available on this device right now.",game_btn:"🎁 Play and win up to 10% off",game_title:"Find the logo!",game_rules:"Find the 2 cards with our logo in 60 seconds. Under 30 seconds: 10% off. Between 30 and 60 seconds: 5% off. One game per day.",game_start:"Start",game_time:"Time:",game_win10:"Well done! You won 10% off.",game_win5:"Well done! You won 5% off.",game_code:"Your code:",game_valid:"Valid for 24 hours. It is applied automatically in your cart and sent with your WhatsApp order.",game_lose:"Time is up. Try again tomorrow!",game_done:"You already played today. Come back tomorrow!",game_use:"View my cart",game_active:"Your discount is active:",disc_label:"Discount",addr:"Address",hours:"Opening hours",cat_ordinateurs:"Computers",cat_telephones:"Phones",cat_accessoires:"Accessories",cat_ecrans:"Screens",cat_reseau:"Network",cat_audio:"Audio"},
+ar:{nav_shop:"المتجر",nav_contact:"اتصل بنا",cart:"السلة",settings:"الإعدادات",hero_h1:"كل ما تحتاجه، ببضع نقرات، يصلك إلى بابك.",hero_p:"اختر منتجاتك ثم أرسل طلبك عبر واتساب. نؤكده معك وننظم التوصيل.",search_ph:"ابحث عن منتج",search_btn:"بحث",wa_write:"راسلنا على واتساب",call:"اتصل",shop_title:"المتجر",contact_title:"تواصل معنا",contact_p:"لديك سؤال أو تريد عرض سعر أو لم تجد منتجًا؟ راسلنا أو اتصل بنا.",email:"البريد الإلكتروني: ",close:"إغلاق",cart_title:"سلتك",total:"المجموع",your_name:"اسمك",address:"عنوان التوصيل",order_wa:"اطلب عبر واتساب",cart_empty:"سلتك فارغة. أضف منتجًا من المتجر.",add:"أضف",add_cart:"أضف إلى السلة",details:"عرض التفاصيل",soldout:"نفد",ask_wa:"اسأل عبر واتساب",hint_img:"المس الصورة لتكبيرها",lb_hint:"المس الصورة للتكبير",all_cats:"كل الفئات",sort_def:"الترتيب الافتراضي",sort_az:"الاسم: من أ إلى ي",sort_za:"الاسم: من ي إلى أ",sort_pa:"السعر: من الأقل إلى الأعلى",sort_pd:"السعر: من الأعلى إلى الأقل",loading:"جارٍ تحميل المنتجات…",err:"تعذّر تحميل المنتجات حاليًا. راسلنا على واتساب.",none_cat:"لا توجد منتجات في هذه الفئة بعد. راسلنا على واتساب لتقديم طلبك.",none_search:"لا يوجد منتج مطابق. جرّب كلمة أخرى أو اختر «كل الفئات».",prep:"المتجر قيد التحضير. عد قريبًا أو راسلنا على واتساب.",set_title:"الإعدادات",set_theme:"المظهر",th_auto:"تلقائي",th_light:"فاتح",th_dark:"داكن",set_lang:"اللغة",set_lang_note:"تبقى أسماء المنتجات وأوصافها باللغة المكتوبة في الجدول.",set_about:"من نحن",about_p:"نحن متجر إلكتروني متخصص في بيع منتجات مختارة بعناية لتلبية احتياجاتكم. أولويتنا أن نقدّم لكم تجربة شراء بسيطة وموثوقة وعملية، مع خدمة عملاء مهتمة وتوصيل مناسب.",set_deliv:"🚚 الشروط العامة للتوصيل",about_p2:"الجودة والثقة ورضاكم في صميم التزاماتنا.",c1t:"1. منطقة التوصيل",c1:"نؤمّن توصيل طلباتكم داخل جزر القمر، بحسب المناطق المخدومة والإمكانيات المتاحة.",c2t:"2. رسوم التوصيل",c2:"تُحدَّد رسوم التوصيل حسب الوجهة، وتُبلَّغ للعميل قبل تأكيد الطلب.",c3t:"3. مدة التوصيل",c3:"تُبلَّغ المدة التقديرية عند تأكيد الطلب، وقد تختلف حسب الوجهة وتوفر المنتج.",c4t:"4. تأكيد الطلبات",c4:"يجب تأكيد كل طلب قبل شحنه. وعلى العميل تقديم بيانات صحيحة ورقم هاتف يمكن الوصول إليه.",c5t:"5. استلام الطلبات",c5:"يُرجى من العميل فحص حالة المنتج عند الاستلام والإبلاغ فورًا عن أي ملاحظة.",c6t:"6. غياب العميل",c6:"في حال غياب المستلم أو عدم صحة معلومات التوصيل، قد تُطبَّق رسوم إضافية أو يُؤجَّل التوصيل.",engt:"التزامنا",eng:"نبذل كل جهدنا لضمان توصيل موثوق وبعناية وفي أقرب وقت ممكن، لنضمن لكم تجربة شراء مُرضية.",thanks:"شكرًا لثقتكم.",share_btn:"مشاركة الموقع",share_text:"اكتشفوا ذا بزنس سنتر: تقنيات ومنتجات عبر الإنترنت، تصلكم إلى بابكم.",copied:"تم نسخ الرابط",new_tag:"جديد",new1:"منتج جديد واحد هذا الأسبوع",newn:"{n} منتجات جديدة هذا الأسبوع",notif_title:"الإشعارات",notif_p:"احصل على إشعار عند إضافة منتج جديد.",notif_on:"تفعيل الإشعارات",notif_off:"إيقاف الإشعارات",notif_state_on:"الإشعارات مفعّلة.",notif_denied:"الإشعارات محظورة. اسمح بها من إعدادات هاتفك ثم عد إلى هنا.",notif_na:"الإشعارات غير متاحة حاليًا على هذا الجهاز.",game_btn:"🎁 العب واربح خصمًا حتى 10%",game_title:"جد الشعار!",game_rules:"اعثر على بطاقتي شعارنا خلال 60 ثانية. أقل من 30 ثانية: خصم 10%. بين 30 و60 ثانية: خصم 5%. لعبة واحدة في اليوم.",game_start:"ابدأ",game_time:"الوقت:",game_win10:"أحسنت! ربحت خصم 10%.",game_win5:"أحسنت! ربحت خصم 5%.",game_code:"رمزك:",game_valid:"صالح 24 ساعة. يُطبَّق تلقائيًا في سلتك ويُرسل مع طلبك عبر واتساب.",game_lose:"انتهى الوقت. جرّب حظك غدًا!",game_done:"لقد لعبت اليوم. عد غدًا!",game_use:"عرض السلة",game_active:"خصمك مفعّل:",disc_label:"خصم",addr:"العنوان",hours:"ساعات العمل",cat_ordinateurs:"حواسيب",cat_telephones:"هواتف",cat_accessoires:"إكسسوارات",cat_ecrans:"شاشات",cat_reseau:"شبكات",cat_audio:"صوتيات"}
 };
 let theme="auto",lang="fr",loaded=false,OS=null;
 try{theme=localStorage.getItem("tbc-theme")||"auto";lang=localStorage.getItem("tbc-lang")||"fr"}catch(e){}
@@ -276,9 +305,12 @@ function drawCart(){
  const ids=Object.keys(cart).filter(k=>cart[k]>0&&D.products.some(p=>p.id===k));let tt=0,n=0;
  $("#items").innerHTML=ids.length?ids.map(k=>{const p=D.products.find(x=>x.id===k);tt+=p.p*cart[k];n+=cart[k];
  return `<div class="it"><div><b>${esc(p.n)}</b><br><span class="price">${fmt(p.p)}</span></div><div class="qty"><button data-m="${esc(k)}" aria-label="Retirer un ${esc(p.n)}">−</button><span>${cart[k]}</span><button data-p="${esc(k)}" aria-label="Ajouter un ${esc(p.n)}">+</button></div></div>`}).join(""):`<p class="empty">${esc(t("cart_empty"))}</p>`;
- $("#tot").textContent=fmt(tt);$("#n").textContent=n;$("#wa").disabled=!n;save();
+ const pr=promo(),dc=pr?Math.round(tt*pr.pct/100):0;
+ $("#discrow").hidden=!(pr&&tt>0);
+ if(pr&&tt>0){$("#disctxt").textContent=t("disc_label")+" -"+pr.pct+" % ("+pr.code+")";$("#discamt").textContent="-"+fmt(dc)}
+ $("#tot").textContent=fmt(tt-dc);$("#n").textContent=n;$("#wa").disabled=!n;save();
 }
-function panel(id,o){["#cart","#det","#set"].forEach(s=>{const on=s===id&&o;$(s).classList.toggle("open",on);$(s).setAttribute("aria-hidden",!on)});$("#veil").classList.toggle("on",o)}
+function panel(id,o){if(id!=="#game")gameAbort();["#cart","#det","#set","#game"].forEach(s=>{const on=s===id&&o;$(s).classList.toggle("open",on);$(s).setAttribute("aria-hidden",!on)});$("#veil").classList.toggle("on",o)}
 function closeAll(){panel("",false)}
 
 document.addEventListener("click",e=>{
@@ -286,6 +318,8 @@ document.addEventListener("click",e=>{
  if(d.add){track("add_to_cart",{items:[{item_id:d.add}]});cart[d.add]=(cart[d.add]||0)+1;drawCart();panel("#cart",true)}
  if(d.p){cart[d.p]++;drawCart()}
  if(d.m){cart[d.m]--;drawCart()}
+ if(d.gi!==undefined)gameFlip(+d.gi);
+ if(d.gcart!==undefined)panel("#cart",true);
  if(d.theme)setTheme(d.theme);
  if(d.lang)setLang(d.lang);
  if(d.th){$("#dmain").src=d.th;curI=Math.max(0,curIm.indexOf(d.th))}
@@ -297,7 +331,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!$("#lb").hidden
 $("#wa").onclick=()=>{
  const ids=Object.keys(cart).filter(k=>cart[k]>0&&D.products.some(p=>p.id===k));if(!ids.length)return;let t=0;
  const lines=ids.map(k=>{const p=D.products.find(x=>x.id===k);t+=p.p*cart[k];return `- ${cart[k]} × ${p.n} (${fmt(p.p)})`});
- let m="Bonjour The Business Center, je souhaite commander :\n"+lines.join("\n")+"\nTotal : "+fmt(t);
+ let m="Bonjour The Business Center, je souhaite commander :\n"+lines.join("\n")+(()=>{const pr=promo();if(!pr)return"\nTotal : "+fmt(t);const dc=Math.round(t*pr.pct/100);return"\nSous-total : "+fmt(t)+"\nCode promo : "+pr.code+" (-"+pr.pct+" %) : -"+fmt(dc)+"\nTotal : "+fmt(t-dc)})();
  if($("#cn").value.trim())m+="\nNom : "+$("#cn").value.trim();
  if($("#ca").value.trim())m+="\nLivraison : "+$("#ca").value.trim();
  track("begin_checkout",{value:t,currency:D.currency});
@@ -397,7 +431,7 @@ async function shareSite(){
  try{await navigator.clipboard.writeText(url);flash(t("copied"))}catch(e){window.open("https://wa.me/?text="+encodeURIComponent(data.text+" "+url),"_blank","noopener")}
 }
 $("#share").onclick=shareSite;
-$("#sopen").onclick=()=>panel("#set",true);$("#sclose").onclick=closeAll;
+$("#sopen").onclick=()=>{document.querySelectorAll("#set details").forEach(d=>d.open=false);panel("#set",true)};$("#sclose").onclick=closeAll;
 
 /* Notifications (OneSignal) : si le service est inaccessible, le reste du site n'est pas touché */
 function updNotif(){
@@ -427,6 +461,81 @@ $("#notif").onclick=async()=>{
  }catch(e){}
  updNotif();
 };
+
+/* Mini-jeu : retrouver la paire du logo (60 s). <=30 s : 10 %, sinon 5 % */
+const GAME_SECONDS=60,GAME_FAST=30,GAME_ICONS=["🎧","📱","💻","⌚","🔌","🔋","📷","🎮","🖱️"];
+let G=null,memPromo=null;
+const dayKey=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
+function playedToday(){try{return localStorage.getItem("tbc-played")===dayKey()}catch(e){return false}}
+function setPromo(o){memPromo=o;try{localStorage.setItem("tbc-promo",JSON.stringify(o))}catch(e){}}
+function promo(){
+ let o=memPromo;try{const s=localStorage.getItem("tbc-promo");if(s)o=JSON.parse(s)}catch(e){}
+ if(o&&o.exp>Date.now()&&o.pct&&o.code)return o;
+ if(o){memPromo=null;try{localStorage.removeItem("tbc-promo")}catch(e){}}
+ return null;
+}
+function promoHtml(pr){return `<div class="gwin"><b>${esc(t("game_active"))}</b> -${pr.pct} %<br>${esc(t("game_code"))} <b>${esc(pr.code)}</b></div><button class="btn" data-gcart>${esc(t("game_use"))}</button>`}
+function drawBoard(deck){
+ $("#gboard").innerHTML=deck.map((c,i)=>`<button class="gc" data-gi="${i}" aria-label="${i+1}"><i class="f">?</i><i class="b">${c.logo?`<img src="${LOGO}" alt="">`:c.k}</i></button>`).join("");
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function gameAbort(){if(G&&!G.over){G.over=true;clearInterval(G.timer)}}
+function gameOpen(){
+ gameAbort();G=null;
+ drawBoard(Array(20).fill({k:"",logo:false}));
+ $("#tfill").style.width="100%";$("#gtime").textContent="";
+ const pr=promo(),done=playedToday();
+ $("#gstart").hidden=done;
+ $("#gres").innerHTML=pr?promoHtml(pr):(done?`<p class="sp">${esc(t("game_done"))}</p>`:"");
+ panel("#game",true);
+}
+function gameStart(){
+ if(playedToday())return;
+ try{localStorage.setItem("tbc-played",dayKey())}catch(e){}
+ const deck=shuffle([...GAME_ICONS,...GAME_ICONS].map(k=>({k,logo:false})).concat([{k:"logo",logo:true},{k:"logo",logo:true}]));
+ gameAbort();
+ G={deck,open:[],lock:false,over:false,start:Date.now(),timer:setInterval(gameTick,200)};
+ drawBoard(deck);$("#gres").innerHTML="";$("#gstart").hidden=true;
+ track("game_start",{});gameTick();
+}
+function gameTick(){
+ if(!G||G.over)return;
+ const s=(Date.now()-G.start)/1000,left=Math.max(0,GAME_SECONDS-s);
+ $("#tfill").style.width=(left/GAME_SECONDS*100)+"%";
+ $("#gtime").textContent=t("game_time")+" "+Math.ceil(left)+" s";
+ if(left<=0)gameEnd(false);
+}
+function gameFlip(i){
+ if(!G||G.over||G.lock)return;
+ const el=$("#gboard").children[i];if(!el||el.classList.contains("on"))return;
+ el.classList.add("on");G.open.push(i);
+ if(G.open.length<2)return;
+ const a=G.open[0],b=G.open[1];G.open=[];
+ if(G.deck[a].k===G.deck[b].k){
+  if(G.deck[a].logo){gameEnd(true);return}
+  [a,b].forEach(x=>$("#gboard").children[x].classList.add("ok"));
+ }else{
+  G.lock=true;
+  setTimeout(()=>{if(!G||G.over)return;[a,b].forEach(x=>$("#gboard").children[x].classList.remove("on"));G.lock=false},650);
+ }
+}
+function gameEnd(win){
+ if(!G||G.over)return;
+ G.over=true;clearInterval(G.timer);
+ const el=$("#gres");
+ if(win){
+  const sec=(Date.now()-G.start)/1000,pct=sec<=GAME_FAST?10:5;
+  const L="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let r="";for(let k=0;k<4;k++)r+=L[Math.floor(Math.random()*L.length)];
+  const pr={pct,code:"TBC-"+pct+"-"+r,exp:Date.now()+864e5};
+  setPromo(pr);track("game_win",{value:pct});
+  el.innerHTML=`<div class="gwin"><b>${esc(t(pct===10?"game_win10":"game_win5"))}</b><br>${esc(t("game_code"))} <b>${esc(pr.code)}</b><br><small>${esc(t("game_valid"))}</small></div><button class="btn" data-gcart>${esc(t("game_use"))}</button>`;
+  drawCart();
+ }else{
+  el.innerHTML=`<p class="sp">${esc(t("game_lose"))}</p>`;
+ }
+}
+$("#gopen").onclick=gameOpen;$("#gclose").onclick=closeAll;$("#gstart").onclick=gameStart;
+
 applyTheme();applyLang();
 load().then(()=>{loaded=true;lastLoad=Date.now();applyLang()});
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
